@@ -1,8 +1,10 @@
 package slicecheckers
 
-import "go/ast"
+import (
+	"go/ast"
+	"golang.org/x/tools/go/analysis"
+)
 
-type SliceChecker interface {
-	Alternative() string
-	AppliesTo(*ast.FuncDecl) bool
+type SliceChecker[N ast.Node] interface {
+	AppliesTo(N) (analysis.Diagnostic, bool)
 }

@@ -1,16 +1,21 @@
 package analyzer
 
 import (
+	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers"
 	"go/ast"
 
-	"github.com/manuelarte/goslicespackagecheck/internal"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
 )
 
+const (
+	EqualCheckName = "equal"
+)
+
 func NewAnalyzer() *analysis.Analyzer {
-	f := goslicespackagecheck{}
+	cfg := config{}
+	f := goslicespackagecheck{cfg: &cfg}
 
 	a := &analysis.Analyzer{
 		Name:     "goslicespackagecheck",
@@ -20,10 +25,15 @@ func NewAnalyzer() *analysis.Analyzer {
 		Requires: []*analysis.Analyzer{inspect.Analyzer},
 	}
 
+	a.Flags.BoolVar(&cfg.equal, EqualCheckName, true,
+		"Checks that constructors are placed after the structure declaration.")
+
 	return a
 }
 
-type goslicespackagecheck struct{}
+type goslicespackagecheck struct {
+	cfg *config
+}
 
 func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 	insp, found := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
@@ -32,25 +42,24 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 		return nil, nil
 	}
 
-	fp := internal.NewFileProcessor()
-
 	nodeFilter := []ast.Node{
-		(*ast.File)(nil),
 		(*ast.FuncDecl)(nil),
-		(*ast.TypeSpec)(nil),
 	}
 
 	insp.Preorder(nodeFilter, func(n ast.Node) {
 		switch node := n.(type) {
-		case *ast.File:
-
 		case *ast.FuncDecl:
-
-		case *ast.TypeSpec:
-
+			ec := slicecheckers.EqualChecker{}
+			if diag, ok := ec.AppliesTo(node); ok {
+				pass.Report(diag)
+			}
 		}
 	})
 
 	//nolint:nilnil //any, error
 	return nil, nil
+}
+
+type config struct {
+	equal bool
 }

@@ -1,6 +1,6 @@
 package main
 
-func AreStringArrayEqual(a, b []string) bool { // want `the function AreStringArrayEqual can be replaced by slices.Equal`
+func AreStringArrayEqualOneFieldList(a, b []string) bool { // want `the function AreStringArrayEqualOneFieldList can be replaced by slices.Equal`
 	if len(a) != len(b) {
 		return false
 	}
@@ -12,7 +12,7 @@ func AreStringArrayEqual(a, b []string) bool { // want `the function AreStringAr
 	return true
 }
 
-func Equals[T any](a, b []T) bool { // want `the function Equals can be replaced by slices.Equal`
+func AreStringArrayEqual(a []string, b []string) bool { // want `the function AreStringArrayEqual can be replaced by slices.Equal`
 	if len(a) != len(b) {
 		return false
 	}
@@ -24,7 +24,19 @@ func Equals[T any](a, b []T) bool { // want `the function Equals can be replaced
 	return true
 }
 
-func EqualArrays[T any](a, b []any) bool { // want `the function Equals can be replaced by slices.Equal`
+func Equals[T comparable](a, b []T) bool { // want `the function Equals can be replaced by slices.Equal`
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func EqualArrays[T comparable](a, b []T) bool { // want `the function Equals can be replaced by slices.Equal`
 	if len(a) == len(b) {
 		for i := range a {
 			if a[i] != b[i] {
