@@ -1,8 +1,8 @@
-# TODO Project Name
+# Go Slices Package Check
 
-[![Go](https://github.com/manuelarte/xxxx/actions/workflows/go.yml/badge.svg)](https://github.com/manuelarte/xxxx/actions/workflows/go.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/manuelarte/xxxx)](https://goreportcard.com/report/github.com/manuelarte/xxxx)
-![version](https://img.shields.io/github/v/release/manuelarte/xxxx)
+[![Go](https://github.com/manuelarte/goslicespackagecheck/actions/workflows/go.yml/badge.svg)](https://github.com/manuelarte/goslicespackagecheck/actions/workflows/go.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/manuelarte/goslicespackagecheck)](https://goreportcard.com/report/github.com/manuelarte/goslicespackagecheck)
+![version](https://img.shields.io/github/v/release/manuelarte/goslicespackagecheck)
 
 > [!NOTE]
 > Project info
@@ -12,10 +12,9 @@
 To install it run:
 
 ```bash
-go install github.com/manuelarte/xxxx@latest
+go install github.com/manuelarte/goslicespackagecheck@latest
 ```
 
 ## 🚀 Features
 
 Explain features
-
