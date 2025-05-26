@@ -1,12 +1,13 @@
 package analyzer
 
 import (
-	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers"
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
+
+	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/equalchecker"
 )
 
 const (
@@ -47,9 +48,10 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 	}
 
 	insp.Preorder(nodeFilter, func(n ast.Node) {
+		//nolint:gocritic // more cases to be added
 		switch node := n.(type) {
 		case *ast.FuncDecl:
-			ec := slicecheckers.EqualChecker{}
+			ec := equalchecker.EqualChecker{}
 			if diag, ok := ec.AppliesTo(node); ok {
 				pass.Report(diag)
 			}

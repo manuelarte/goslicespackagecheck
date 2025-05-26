@@ -36,7 +36,19 @@ func Equals[T comparable](a, b []T) bool { // want `the function Equals can be r
 	return true
 }
 
-func EqualArrays[T comparable](a, b []T) bool { // want `the function Equals can be replaced by slices.Equal`
+func EqualsReverseCheck[T comparable](a, b []T) bool { // want `the function EqualsReverseCheck can be replaced by slices.Equal`
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if b[i] != a[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func EqualInsideIf[T comparable](a, b []T) bool { // want `the function EqualInsideIf can be replaced by slices.Equal`
 	if len(a) == len(b) {
 		for i := range a {
 			if a[i] != b[i] {
