@@ -23,6 +23,10 @@ func TestAnalyzer(t *testing.T) {
 				EqualCheckName: "false",
 			},
 		},
+		{
+			desc:     "max",
+			patterns: "max",
+		},
 	}
 
 	for _, test := range testCases {

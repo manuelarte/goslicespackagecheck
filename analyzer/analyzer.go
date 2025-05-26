@@ -12,6 +12,7 @@ import (
 
 const (
 	EqualCheckName = "equal"
+	MaxCheckName   = "max"
 )
 
 func NewAnalyzer() *analysis.Analyzer {
@@ -27,7 +28,10 @@ func NewAnalyzer() *analysis.Analyzer {
 	}
 
 	a.Flags.BoolVar(&cfg.equal, EqualCheckName, true,
-		"Checks that constructors are placed after the structure declaration.")
+		"Check whether some functions can be replaced by slices.Equal")
+
+	a.Flags.BoolVar(&cfg.max, MaxCheckName, true,
+		"Check whether some loops can be replaced by slices.Max")
 
 	return a
 }
@@ -64,4 +68,5 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 
 type config struct {
 	equal bool
+	max   bool
 }
