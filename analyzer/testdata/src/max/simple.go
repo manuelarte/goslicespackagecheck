@@ -21,3 +21,25 @@ func maxFloat32() int {
 	}
 	return maxValue
 }
+
+func maxIntIge() int {
+	a := []int{4, 3, 2, 1}
+	var int maxValue
+	for i := 0; i < len(a); i++ {
+		if a[i] >= maxValue {
+			maxValue = value
+		}
+	}
+	return maxValue
+}
+
+func maxIntIg() int {
+	a := []int{4, 3, 2, 1}
+	var int maxValue
+	for i := 0; i < len(a); i++ {
+		if a[i] > maxValue {
+			maxValue = value
+		}
+	}
+	return maxValue
+}
