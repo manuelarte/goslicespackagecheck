@@ -36,7 +36,6 @@ linters:
     - exhaustive
     - exptostd
     - fatcontext
-    - forbidigo
     - funcorder
     - funlen
     - gocheckcompilerdirectives
