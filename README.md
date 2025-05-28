@@ -30,8 +30,13 @@ goslicespackagecheck [-equal=true|false] [-max=true|false]
 
 ### slices.Equal
 
-Detect functions that can be replaced by [`slices.Equal`](https://pkg.go.dev/slices#Equal)
+Detect functions that can be replaced by [`slices.Equal`](https://pkg.go.dev/slices#Equal). Example can be found [here](./examples/slices/equal/main.go).
 
 ### slices.Max
 
-Detect for loops that can be replaced by [`slices.Max`](https://pkg.go.dev/slices#Max)
+Detect for loops that can be replaced by [`slices.Max`](https://pkg.go.dev/slices#Max). Example can be found [here](./examples/slices/max/main.go).
+
+
+### maps.Copy
+
+Detect for loops that can be replaced by [`maps.Copy`](https://pkg.go.dev/maps#Clone). Example can be found [here](examples/maps/copy/main.go).

@@ -10,3 +10,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Adding support to detect replacements for `slices.Equal`.
+- Adding support to detect replacements for `slices.Max`.
+- Adding support to detect replacements for `maps.Clone`.
