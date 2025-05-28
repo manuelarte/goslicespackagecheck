@@ -18,7 +18,7 @@ func TestAnalyzer(t *testing.T) {
 		},
 		{
 			desc:     "equal equal disable",
-			patterns: "equal equal disable",
+			patterns: "equal-equal-disable",
 			options: map[string]string{
 				EqualCheckName: "false",
 			},

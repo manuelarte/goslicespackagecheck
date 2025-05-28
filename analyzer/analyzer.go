@@ -1,13 +1,14 @@
 package analyzer
 
 import (
+	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/equalchecker"
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
 
-	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/equalchecker"
+	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/maxchecker"
 )
 
 const (
@@ -49,16 +50,27 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 
 	nodeFilter := []ast.Node{
 		(*ast.FuncDecl)(nil),
+		(*ast.RangeStmt)(nil),
 	}
 
 	insp.Preorder(nodeFilter, func(n ast.Node) {
-		//nolint:gocritic // more cases to be added
 		switch node := n.(type) {
 		case *ast.FuncDecl:
-			ec := equalchecker.EqualChecker{}
-			if diag, ok := ec.AppliesTo(node); ok {
-				pass.Report(diag)
+			if g.cfg.equal {
+				ec := equalchecker.EqualChecker{}
+				if diag, ok := ec.AppliesTo(node); ok {
+					pass.Report(diag)
+				}
 			}
+
+		case *ast.RangeStmt:
+			if g.cfg.max {
+				mc := maxchecker.MaxChecker{}
+				if diag, ok := mc.AppliesTo(node); ok {
+					pass.Report(diag)
+				}
+			}
+
 		}
 	})
 
