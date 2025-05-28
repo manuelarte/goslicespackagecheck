@@ -25,7 +25,7 @@ func maxFloat32() float32 {
 func maxIntIge() int {
 	a := []int{4, 3, 2, 1}
 	var maxValue int
-	for i := 0; i < len(a); i++ {
+	for i := 0; i < len(a); i++ { // want `this for loop can be replaced by slices.Max`
 		if a[i] >= maxValue {
 			maxValue = a[i]
 		}
@@ -36,7 +36,7 @@ func maxIntIge() int {
 func maxIntIg() int {
 	a := []int{4, 3, 2, 1}
 	var maxValue int
-	for i := 0; i < len(a); i++ {
+	for i := 0; i < len(a); i++ { // want `this for loop can be replaced by slices.Max`
 		if a[i] > maxValue {
 			maxValue = a[i]
 		}

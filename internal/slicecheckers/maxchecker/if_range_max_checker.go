@@ -6,27 +6,22 @@ import (
 )
 
 // ifMaxChecker Holder to check if it's comparing max using inside a i, value := range a for loop.
-type ifMaxChecker struct {
+type ifRangeMaxChecker struct {
 	rangeKeyIdent   *ast.Ident
 	rangeValueIdent *ast.Ident
 	ifStmn          *ast.IfStmt
 }
 
-func (imc *ifMaxChecker) apply() bool {
+func (imc *ifRangeMaxChecker) apply() bool {
 	maxValueIdent, ok := imc.checkMaxValueCond()
 	if !ok {
 		return false
 	}
 
-	assignStmn, isAssignStmn := imc.ifStmn.Body.List[0].(*ast.AssignStmt)
-	if !isAssignStmn {
-		return false
-	}
-
-	return imc.checkAssignmentStmn(assignStmn, maxValueIdent)
+	return imc.checkAssignmentStmn(maxValueIdent)
 }
 
-func (imc *ifMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
+func (imc *ifRangeMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
 	binaryExpr, ok := imc.ifStmn.Cond.(*ast.BinaryExpr)
 	if !ok {
 		return nil, false
@@ -61,7 +56,12 @@ func (imc *ifMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
 	return maxValueIdent, true
 }
 
-func (imc *ifMaxChecker) checkAssignmentStmn(assignStmn *ast.AssignStmt, maxValueIdent *ast.Ident) bool {
+func (imc *ifRangeMaxChecker) checkAssignmentStmn(maxValueIdent *ast.Ident) bool {
+	assignStmn, isAssignStmn := imc.ifStmn.Body.List[0].(*ast.AssignStmt)
+	if !isAssignStmn {
+		return false
+	}
+
 	if len(assignStmn.Lhs) == 1 {
 		lhsIdent, isIdent := assignStmn.Lhs[0].(*ast.Ident)
 		if !isIdent {

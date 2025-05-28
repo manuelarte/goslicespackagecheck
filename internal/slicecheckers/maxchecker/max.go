@@ -2,17 +2,19 @@ package maxchecker
 
 import (
 	"go/ast"
+	"go/token"
 
 	"golang.org/x/tools/go/analysis"
 
 	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers"
 )
 
-var _ slicecheckers.SliceChecker[*ast.RangeStmt] = new(MaxRangeChecker)
-var _ slicecheckers.SliceChecker[*ast.ForStmt] = new(MaxForChecker)
+var (
+	_ slicecheckers.SliceChecker[*ast.RangeStmt] = new(MaxRangeChecker)
+	_ slicecheckers.SliceChecker[*ast.ForStmt]   = new(MaxForChecker)
+)
 
-type MaxRangeChecker struct {
-}
+type MaxRangeChecker struct{}
 
 func (m *MaxRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool) {
 	if len(r.Body.List) != 1 {
@@ -24,9 +26,6 @@ func (m *MaxRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool
 		return analysis.Diagnostic{}, false
 	}
 
-	// TODO(manuelarte): check that ifStmn, check if the RangeStmt is using i, value := range a, or i := 0; i < len(a)
-	// and act accordingly, for the 1st case, I need to get the Ident name (in the example value)
-	// for the typical for loop with i:0, I need to check that they are checking a[i]
 	_, isArrayIndexValueIdent := r.X.(*ast.Ident)
 	if !isArrayIndexValueIdent {
 		return analysis.Diagnostic{}, false
@@ -42,15 +41,16 @@ func (m *MaxRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool
 		return analysis.Diagnostic{}, false
 	}
 
-	bmc := ifMaxChecker{
+	irmc := ifRangeMaxChecker{
 		rangeKeyIdent:   rangeKeyIdent,
 		rangeValueIdent: rangeValueIdent,
 		ifStmn:          ifStmn,
 	}
 
-	if !bmc.apply() {
+	if !irmc.apply() {
 		return analysis.Diagnostic{}, false
 	}
+
 	return analysis.Diagnostic{
 		Pos:     r.Pos(),
 		Message: "this for loop can be replaced by slices.Max",
@@ -58,9 +58,93 @@ func (m *MaxRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool
 	}, true
 }
 
-type MaxForChecker struct {
-}
+type MaxForChecker struct{}
 
 func (m *MaxForChecker) AppliesTo(f *ast.ForStmt) (analysis.Diagnostic, bool) {
-	return analysis.Diagnostic{}, false
+	if len(f.Body.List) != 1 {
+		return analysis.Diagnostic{}, false
+	}
+
+	ifStmn, ok := f.Body.List[0].(*ast.IfStmt)
+	if !ok {
+		return analysis.Diagnostic{}, false
+	}
+
+	iIdent, isInitOk := m.checkForInit(f)
+	if !isInitOk {
+		return analysis.Diagnostic{}, false
+	}
+
+	arrayIdent, isCondOk := m.checkForCond(f)
+	if !isCondOk {
+		return analysis.Diagnostic{}, false
+	}
+
+	// check that ifStmn is checking for value >=
+	iffrc := ifForMaxChecker{iIdent: iIdent, arrayIdent: arrayIdent, ifStmn: ifStmn}
+	if !iffrc.apply() {
+		return analysis.Diagnostic{}, false
+	}
+
+	return analysis.Diagnostic{
+		Pos:     f.Pos(),
+		Message: "this for loop can be replaced by slices.Max",
+		URL:     "", // TODO(manuelarte): add readme and then put link here
+	}, true
+}
+
+func (m *MaxForChecker) checkForInit(f *ast.ForStmt) (*ast.Ident, bool) {
+	iAssignStmn, isIAssignStmn := f.Init.(*ast.AssignStmt)
+	if !isIAssignStmn {
+		return nil, false
+	}
+
+	if len(iAssignStmn.Lhs) != 1 {
+		return nil, false
+	}
+
+	lhsIdent, isLhsIdent := iAssignStmn.Lhs[0].(*ast.Ident)
+	if !isLhsIdent {
+		return nil, false
+	}
+	rhsBasicLit, isRhsBasicLit := iAssignStmn.Rhs[0].(*ast.BasicLit)
+	if !isRhsBasicLit {
+		return nil, false
+	}
+	if rhsBasicLit.Value != "0" {
+		return nil, false
+	}
+
+	return lhsIdent, true
+}
+
+// checking i < len(a) -> returns a, true
+func (m *MaxForChecker) checkForCond(f *ast.ForStmt) (*ast.Ident, bool) {
+	condExpr, isBinaryExpr := f.Cond.(*ast.BinaryExpr)
+	if !isBinaryExpr {
+		return nil, false
+	}
+	if condExpr.Op != token.LSS {
+		return nil, false
+	}
+	// check x is the same as init
+	yCallExpr, isCallExpr := condExpr.Y.(*ast.CallExpr)
+	if !isCallExpr {
+		return nil, false
+	}
+	lenFun, isIdentFun := yCallExpr.Fun.(*ast.Ident)
+	if !isIdentFun {
+		return nil, false
+	}
+	if lenFun.Name != "len" || len(yCallExpr.Args) != 1 {
+		return nil, false
+	}
+
+	arrayIdent, isArrayIdent := yCallExpr.Args[0].(*ast.Ident)
+	if !isArrayIdent {
+		return nil, false
+	}
+
+	return arrayIdent, true
+
 }
