@@ -49,6 +49,7 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 	}
 
 	nodeFilter := []ast.Node{
+		(*ast.ForStmt)(nil),
 		(*ast.FuncDecl)(nil),
 		(*ast.RangeStmt)(nil),
 	}
@@ -65,7 +66,14 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 
 		case *ast.RangeStmt:
 			if g.cfg.max {
-				mc := maxchecker.MaxChecker{}
+				mc := maxchecker.MaxRangeChecker{}
+				if diag, ok := mc.AppliesTo(node); ok {
+					pass.Report(diag)
+				}
+			}
+		case *ast.ForStmt:
+			if g.cfg.max {
+				mc := maxchecker.MaxForChecker{}
 				if diag, ok := mc.AppliesTo(node); ok {
 					pass.Report(diag)
 				}

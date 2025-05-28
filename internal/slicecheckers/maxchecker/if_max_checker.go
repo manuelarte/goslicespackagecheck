@@ -12,22 +12,22 @@ type ifMaxChecker struct {
 	ifStmn          *ast.IfStmt
 }
 
-func (bmc *ifMaxChecker) apply() bool {
-	maxValueIdent, ok := bmc.checkMaxValueCond()
+func (imc *ifMaxChecker) apply() bool {
+	maxValueIdent, ok := imc.checkMaxValueCond()
 	if !ok {
 		return false
 	}
 
-	assignStmn, isAssignStmn := bmc.ifStmn.Body.List[0].(*ast.AssignStmt)
+	assignStmn, isAssignStmn := imc.ifStmn.Body.List[0].(*ast.AssignStmt)
 	if !isAssignStmn {
 		return false
 	}
 
-	return bmc.checkAssignmentStmn(assignStmn, maxValueIdent)
+	return imc.checkAssignmentStmn(assignStmn, maxValueIdent)
 }
 
-func (bmc *ifMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
-	binaryExpr, ok := bmc.ifStmn.Cond.(*ast.BinaryExpr)
+func (imc *ifMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
+	binaryExpr, ok := imc.ifStmn.Cond.(*ast.BinaryExpr)
 	if !ok {
 		return nil, false
 	}
@@ -45,12 +45,12 @@ func (bmc *ifMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
 	var maxValueIdent *ast.Ident
 
 	switch {
-	case xIdent.Name == bmc.rangeValueIdent.Name:
+	case xIdent.Name == imc.rangeValueIdent.Name:
 		if binaryExpr.Op != token.GEQ && binaryExpr.Op != token.GTR {
 			return nil, false
 		}
 		maxValueIdent = yIdent
-	case yIdent.Name == bmc.rangeValueIdent.Name:
+	case yIdent.Name == imc.rangeValueIdent.Name:
 		if binaryExpr.Op != token.LEQ && binaryExpr.Op != token.LSS {
 			return nil, false
 		}
@@ -61,7 +61,7 @@ func (bmc *ifMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
 	return maxValueIdent, true
 }
 
-func (bmc *ifMaxChecker) checkAssignmentStmn(assignStmn *ast.AssignStmt, maxValueIdent *ast.Ident) bool {
+func (imc *ifMaxChecker) checkAssignmentStmn(assignStmn *ast.AssignStmt, maxValueIdent *ast.Ident) bool {
 	if len(assignStmn.Lhs) == 1 {
 		lhsIdent, isIdent := assignStmn.Lhs[0].(*ast.Ident)
 		if !isIdent {
@@ -76,7 +76,7 @@ func (bmc *ifMaxChecker) checkAssignmentStmn(assignStmn *ast.AssignStmt, maxValu
 		if !isIdent {
 			return false
 		}
-		if rhsIdent.Name != bmc.rangeValueIdent.Name {
+		if rhsIdent.Name != imc.rangeValueIdent.Name {
 			return false
 		}
 	}

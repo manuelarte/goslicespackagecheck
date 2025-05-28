@@ -8,12 +8,13 @@ import (
 	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers"
 )
 
-var _ slicecheckers.SliceChecker[*ast.RangeStmt] = new(MaxChecker)
+var _ slicecheckers.SliceChecker[*ast.RangeStmt] = new(MaxRangeChecker)
+var _ slicecheckers.SliceChecker[*ast.ForStmt] = new(MaxForChecker)
 
-type MaxChecker struct {
+type MaxRangeChecker struct {
 }
 
-func (m *MaxChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool) {
+func (m *MaxRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool) {
 	if len(r.Body.List) != 1 {
 		return analysis.Diagnostic{}, false
 	}
@@ -55,4 +56,11 @@ func (m *MaxChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool) {
 		Message: "this for loop can be replaced by slices.Max",
 		URL:     "", // TODO(manuelarte): add readme and then put link here
 	}, true
+}
+
+type MaxForChecker struct {
+}
+
+func (m *MaxForChecker) AppliesTo(f *ast.ForStmt) (analysis.Diagnostic, bool) {
+	return analysis.Diagnostic{}, false
 }
