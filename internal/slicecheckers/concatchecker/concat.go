@@ -20,8 +20,32 @@ func (c *ConcatRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, b
 		return analysis.Diagnostic{}, false
 	}
 
-	_, isArrayIndexValueIdent := r.X.(*ast.Ident)
+	xIdent, isArrayIndexValueIdent := r.X.(*ast.Ident)
 	if !isArrayIndexValueIdent {
+		return analysis.Diagnostic{}, false
+	}
+
+	// check xIdent is an array
+	if xIdent.Obj.Decl == nil {
+		return analysis.Diagnostic{}, false
+	}
+	xAssignStmn, isAssignStmn := xIdent.Obj.Decl.(*ast.AssignStmt)
+	if !isAssignStmn {
+		return analysis.Diagnostic{}, false
+	}
+	if len(xAssignStmn.Rhs) != 1 {
+		return analysis.Diagnostic{}, false
+	}
+	compositeLit, isRHSIdent := xAssignStmn.Rhs[0].(*ast.CompositeLit)
+	if !isRHSIdent {
+		return analysis.Diagnostic{}, false
+	}
+	if compositeLit.Type == nil {
+		return analysis.Diagnostic{}, false
+	}
+
+	_, isArrayType := compositeLit.Type.(*ast.ArrayType)
+	if !isArrayType {
 		return analysis.Diagnostic{}, false
 	}
 

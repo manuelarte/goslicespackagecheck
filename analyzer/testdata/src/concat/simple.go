@@ -20,3 +20,12 @@ func concatAndLogInt() []int {
 	}
 	return b
 }
+
+func concatMap() []int {
+	a := map[string]int{"4": 4, "3": 3, "2": 2, "1": 1}
+	var b []int
+	for _, value := range a {
+		b = append(b, value)
+	}
+	return b
+}
