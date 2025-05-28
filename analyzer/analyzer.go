@@ -1,13 +1,13 @@
 package analyzer
 
 import (
-	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/equalchecker"
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
 
+	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/equalchecker"
 	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/maxchecker"
 )
 
@@ -70,7 +70,6 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 					pass.Report(diag)
 				}
 			}
-
 		}
 	})
 
