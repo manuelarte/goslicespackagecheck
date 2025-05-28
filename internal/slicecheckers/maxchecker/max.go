@@ -103,12 +103,12 @@ func (m *MaxForChecker) checkForInit(f *ast.ForStmt) (*ast.Ident, bool) {
 		return nil, false
 	}
 
-	lhsIdent, isLhsIdent := iAssignStmn.Lhs[0].(*ast.Ident)
-	if !isLhsIdent {
+	lhsIdent, isLHSIdent := iAssignStmn.Lhs[0].(*ast.Ident)
+	if !isLHSIdent {
 		return nil, false
 	}
-	rhsBasicLit, isRhsBasicLit := iAssignStmn.Rhs[0].(*ast.BasicLit)
-	if !isRhsBasicLit {
+	rhsBasicLit, isRHSBasicLit := iAssignStmn.Rhs[0].(*ast.BasicLit)
+	if !isRHSBasicLit {
 		return nil, false
 	}
 	if rhsBasicLit.Value != "0" {
@@ -118,7 +118,7 @@ func (m *MaxForChecker) checkForInit(f *ast.ForStmt) (*ast.Ident, bool) {
 	return lhsIdent, true
 }
 
-// checking i < len(a) -> returns a, true
+// checking i < len(a) -> returns a, true.
 func (m *MaxForChecker) checkForCond(f *ast.ForStmt) (*ast.Ident, bool) {
 	condExpr, isBinaryExpr := f.Cond.(*ast.BinaryExpr)
 	if !isBinaryExpr {
@@ -146,5 +146,4 @@ func (m *MaxForChecker) checkForCond(f *ast.ForStmt) (*ast.Ident, bool) {
 	}
 
 	return arrayIdent, true
-
 }

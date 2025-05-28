@@ -34,23 +34,28 @@ func (imc *ifForMaxChecker) checkMaxValueCond() (*ast.Ident, bool) {
 	yIdent, isYIdent := binaryExpr.Y.(*ast.Ident)
 	xIndexExpr, isXIndexExpr := binaryExpr.X.(*ast.IndexExpr)
 	yIndexExpr, isYIndexExpr := binaryExpr.Y.(*ast.IndexExpr)
-	if isXIdent && isYIndexExpr {
+	switch {
+	case isXIdent && isYIndexExpr:
 		maxValueIdent = xIdent
 		indexExpr = yIndexExpr
 		if binaryExpr.Op != token.LEQ && binaryExpr.Op != token.LSS {
 			return nil, false
 		}
-	} else if isXIndexExpr && isYIdent {
+	case isXIndexExpr && isYIdent:
 		indexExpr = xIndexExpr
 		maxValueIdent = yIdent
 		if binaryExpr.Op != token.GEQ && binaryExpr.Op != token.GTR {
 			return nil, false
 		}
-	} else {
+	default:
 		return nil, false
 	}
 
-	if indexExpr.Index.(*ast.Ident).Name != imc.iIdent.Name {
+	indexIdent, isIndexIdent := indexExpr.Index.(*ast.Ident)
+	if !isIndexIdent {
+		return nil, false
+	}
+	if indexIdent.Name != imc.iIdent.Name {
 		return nil, false
 	}
 

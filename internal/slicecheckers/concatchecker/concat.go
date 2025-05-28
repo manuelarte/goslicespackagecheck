@@ -1,3 +1,4 @@
+//nolint:cyclop // refactor later
 package concatchecker
 
 import (
@@ -12,10 +13,8 @@ var _ slicecheckers.SliceChecker[*ast.RangeStmt] = new(ConcatRangeChecker)
 
 // ConcatRangeChecker checks whether the RangeStmt can be replaced with slices.Concat.
 type ConcatRangeChecker struct {
-	r *ast.RangeStmt
 }
 
-//nolint:gocognit // refactor later
 func (c *ConcatRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool) {
 	if len(r.Body.List) != 1 {
 		return analysis.Diagnostic{}, false
@@ -42,9 +41,9 @@ func (c *ConcatRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, b
 	if len(assignStmn.Rhs) != 1 {
 		return analysis.Diagnostic{}, false
 	}
-	arrayIdent, isLhsIdent := assignStmn.Lhs[0].(*ast.Ident)
-	appendCallExpr, isRhsCallExpr := assignStmn.Rhs[0].(*ast.CallExpr)
-	if !isLhsIdent || !isRhsCallExpr {
+	arrayIdent, isLHSIdent := assignStmn.Lhs[0].(*ast.Ident)
+	appendCallExpr, isRHSCallExpr := assignStmn.Rhs[0].(*ast.CallExpr)
+	if !isLHSIdent || !isRHSCallExpr {
 		return analysis.Diagnostic{}, false
 	}
 	appendFuncIdent, isAppendFuncIdent := appendCallExpr.Fun.(*ast.Ident)
@@ -56,6 +55,7 @@ func (c *ConcatRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, b
 		return analysis.Diagnostic{}, false
 	}
 
+	//nolint:mnd // append has two parameters
 	if len(appendCallExpr.Args) != 2 {
 		return analysis.Diagnostic{}, false
 	}

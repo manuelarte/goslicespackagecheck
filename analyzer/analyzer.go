@@ -46,6 +46,7 @@ type goslicespackagecheck struct {
 	cfg *config
 }
 
+//nolint:gocognit // if for config
 func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 	insp, found := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	if !found {

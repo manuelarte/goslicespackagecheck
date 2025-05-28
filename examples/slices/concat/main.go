@@ -15,11 +15,7 @@ func main() {
 
 func concat(a, b []int) []int {
 	var c []int
-	for _, value := range a {
-		c = append(c, value)
-	}
-	for _, value := range b {
-		c = append(c, value)
-	}
+	c = append(c, a...)
+	c = append(c, b...)
 	return c
 }

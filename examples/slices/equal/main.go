@@ -18,7 +18,7 @@ func equal(a, b []int) bool {
 		return false
 	}
 	n := len(a)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		if a[i] != b[i] {
 			return false
 		}
