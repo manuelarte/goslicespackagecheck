@@ -54,7 +54,7 @@ func (m *MaxRangeChecker) AppliesTo(r *ast.RangeStmt) (analysis.Diagnostic, bool
 	return analysis.Diagnostic{
 		Pos:     r.Pos(),
 		Message: "this for loop can be replaced by slices.Max",
-		URL:     "", // TODO(manuelarte): add readme and then put link here
+		URL:     "https://github.com/manuelarte/goslicespackagecheck/tree/main?tab=readme-ov-file#slicesmax",
 	}, true
 }
 

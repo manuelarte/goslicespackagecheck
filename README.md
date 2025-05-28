@@ -20,13 +20,18 @@ go install github.com/manuelarte/goslicespackagecheck@latest
 To run it:
 
 ```bash
-goslicespackagecheck [-equal=true|false] [-max=true|false]
+goslicespackagecheck [-concat=true|false] [-equal=true|false] [-max=true|false]
 ```
 
-- `equal`: To enable/disable `slices.Equal` check.
-- `max`: To enable/disable `slices.Max` check.
+- `concat`: (default `true`) To enable/disable `slices.Concat` check.
+- `equal`: (default `true`) To enable/disable `slices.Equal` check.
+- `max`: (default `true`) To enable/disable `slices.Max` check.
 
 ## 🚀 Features
+
+### slices.Concat
+
+Detect for loops that can be replaced by [`slices.Concat`](https://pkg.go.dev/maps#Clone). Example can be found [here](examples/slices/concat/main.go).
 
 ### slices.Equal
 
@@ -35,8 +40,3 @@ Detect functions that can be replaced by [`slices.Equal`](https://pkg.go.dev/sli
 ### slices.Max
 
 Detect for loops that can be replaced by [`slices.Max`](https://pkg.go.dev/slices#Max). Example can be found [here](./examples/slices/max/main.go).
-
-
-### maps.Copy
-
-Detect for loops that can be replaced by [`maps.Copy`](https://pkg.go.dev/maps#Clone). Example can be found [here](examples/maps/copy/main.go).

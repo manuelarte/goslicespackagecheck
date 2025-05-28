@@ -27,6 +27,10 @@ func TestAnalyzer(t *testing.T) {
 			desc:     "max",
 			patterns: "max",
 		},
+		{
+			desc:     "concat",
+			patterns: "concat",
+		},
 	}
 
 	for _, test := range testCases {

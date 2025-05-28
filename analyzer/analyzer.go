@@ -1,6 +1,7 @@
 package analyzer
 
 import (
+	"github.com/manuelarte/goslicespackagecheck/internal/slicecheckers/concatchecker"
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
@@ -12,8 +13,9 @@ import (
 )
 
 const (
-	EqualCheckName = "equal"
-	MaxCheckName   = "max"
+	ConcatCheckName = "concat"
+	EqualCheckName  = "equal"
+	MaxCheckName    = "max"
 )
 
 func NewAnalyzer() *analysis.Analyzer {
@@ -27,6 +29,9 @@ func NewAnalyzer() *analysis.Analyzer {
 		Run:      f.run,
 		Requires: []*analysis.Analyzer{inspect.Analyzer},
 	}
+
+	a.Flags.BoolVar(&cfg.concat, ConcatCheckName, true,
+		"Check whether some loops can be replaced by slices.Concat")
 
 	a.Flags.BoolVar(&cfg.equal, EqualCheckName, true,
 		"Check whether some functions can be replaced by slices.Equal")
@@ -71,6 +76,12 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 					pass.Report(diag)
 				}
 			}
+			if g.cfg.concat {
+				mc := concatchecker.ConcatRangeChecker{}
+				if diag, ok := mc.AppliesTo(node); ok {
+					pass.Report(diag)
+				}
+			}
 		case *ast.ForStmt:
 			if g.cfg.max {
 				mc := maxchecker.MaxForChecker{}
@@ -86,6 +97,7 @@ func (g *goslicespackagecheck) run(pass *analysis.Pass) (any, error) {
 }
 
 type config struct {
-	equal bool
-	max   bool
+	concat bool
+	equal  bool
+	max    bool
 }

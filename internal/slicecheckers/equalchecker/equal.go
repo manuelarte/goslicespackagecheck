@@ -79,7 +79,7 @@ func (c *EqualChecker) AppliesTo(fn *ast.FuncDecl) (analysis.Diagnostic, bool) {
 	return analysis.Diagnostic{
 		Pos:     fn.Pos(),
 		Message: fmt.Sprintf("the function %s can be replaced by slices.Equal", fn.Name.Name),
-		URL:     "", // TODO(manuelarte): add readme and then put link here
+		URL:     "https://github.com/manuelarte/goslicespackagecheck/tree/main?tab=readme-ov-file#slicesequal",
 	}, true
 }
 
