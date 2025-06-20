@@ -4,6 +4,9 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/manuelarte/goslicespackagecheck)](https://goreportcard.com/report/github.com/manuelarte/goslicespackagecheck)
 ![version](https://img.shields.io/github/v/release/manuelarte/goslicespackagecheck)
 
+> [!NOTE]
+> This linter is archives because there is a way better alternative, `go run golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest -fix -test ./...`
+
 This 🧐 linter checks whether some of your functions can be replaced by already existing 🍕 [slices](https://pkg.go.dev/slices) functions.
 
 > [!WARNING]  
